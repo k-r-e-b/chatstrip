@@ -107,7 +107,7 @@ No installation required! ChatStrip is a single HTML file that runs entirely in 
 
 ## 📄 License
 
-Open Source - Feel free to use, modify, and distribute.
+MIT License - Feel free to use, modify, and distribute.
 
 ## 🤝 Contributing
 
