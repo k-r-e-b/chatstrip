@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatStrip - WhatsApp Chat Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#2C86A4',
+                        'secondary': '#17A2B8',
+                        'accent': '#FFB400',
+                        'neutral-bg': '#F9FAFB',
+                        'success': '#4CAF50',
+                        'warning': '#FF9800',
+                        'error': '#F44336'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2C86A4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-neutral-bg min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold text-center">ChatStrip</h1>
+            <p class="text-center mt-2 text-blue-100">WhatsApp Chat Analyzer - 100% Client-Side Privacy</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Enhanced Privacy Notice -->
+        <div class="relative bg-gradient-to-br from-success/20 via-success/10 to-primary/10 border-2 border-success/30 rounded-2xl p-8 mb-8 overflow-hidden">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-5">
+                <svg class="w-full h-full" viewBox="0 0 100 100" fill="none">
+                    <pattern id="shield-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M10 2L16 6V14L10 18L4 14V6L10 2Z" stroke="currentColor" stroke-width="0.5" fill="none"/>
+                    </pattern>
+                    <rect width="100" height="100" fill="url(#shield-pattern)"/>
+                </svg>
+            </div>
+            
+            <div class="relative z-10 text-center">
+                <!-- Main Shield Icon -->
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-success/20 rounded-full mb-6">
+                    <svg class="w-12 h-12 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                
+                <!-- Main Heading -->
+                <h2 class="text-4xl md:text-5xl font-bold text-success mb-4">
+                    🔒 100% Privacy Protected
+                </h2>
+                
+                <!-- Subheading -->
+                <p class="text-xl md:text-2xl text-gray-700 font-medium mb-6">
+                    Your chat data never leaves your browser
+                </p>
+                
+                <!-- Feature Points -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-success/20">
+                        <div class="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">No Server Upload</h4>
+                        <p class="text-sm text-gray-600">Files stay on your device</p>
+                    </div>
+                    
+                    <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-success/20">
+                        <div class="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Local Processing</h4>
+                        <p class="text-sm text-gray-600">Analysis happens in browser</p>
+                    </div>
+                    
+                    <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-success/20">
+                        <div class="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Zero Tracking</h4>
+                        <p class="text-sm text-gray-600">No data collection</p>
+                    </div>
+                </div>
+                
+                <!-- Trust Badge -->
+                <div class="mt-8">
+                    <div class="inline-flex items-center bg-white/80 backdrop-blur-sm border border-success/30 rounded-full px-6 py-3">
+                        <svg class="w-5 h-5 text-success mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-700">Open Source • Client-Side Only • Verified Safe</span>
+                    </div>
+                </div>
+                
+                <!-- Start Now Button -->
+                <div class="mt-6">
+                    <button onclick="document.getElementById('uploadSection').scrollIntoView({behavior: 'smooth', block: 'center'})" 
+                            class="group bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        <span class="flex items-center">
+                            Start Analyzing Now
+                            <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Export Instructions -->
+        <div id="exportInstructions" class="bg-accent/10 border border-accent/20 rounded-lg p-6 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-accent flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    How to Export Your WhatsApp Chat
+                </h2>
+                <button onclick="document.getElementById('exportInstructions').style.display='none'" 
+                        class="group p-2 hover:bg-accent/20 rounded-full transition-colors">
+                    <svg class="w-5 h-5 text-accent group-hover:text-accent/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-3">📱 On Mobile (iOS/Android):</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                        <li>Open WhatsApp and go to the chat you want to analyze</li>
+                        <li>Tap the contact/group name at the top</li>
+                        <li>Scroll down and tap "Export Chat"</li>
+                        <li>Choose <strong>"Without Media"</strong> for faster processing</li>
+                        <li>Save or share the .txt file to your computer</li>
+                    </ol>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-3">💻 On WhatsApp Web/Desktop:</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                        <li>Open the chat you want to analyze</li>
+                        <li>Click the three dots menu (⋮) in the top right</li>
+                        <li>Select "More" → "Export chat"</li>
+                        <li>Choose <strong>"Without media"</strong></li>
+                        <li>Download the .txt file to your computer</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
+                <p class="text-sm text-warning font-medium">💡 Pro Tip: Choose "Without media" to get faster processing and smaller file sizes!</p>
+            </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div id="uploadSection" class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold text-primary mb-4">Upload WhatsApp Chat</h2>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                <input type="file" id="chatFile" accept=".txt" class="hidden">
+                <label for="chatFile" class="cursor-pointer">
+                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p class="text-lg font-medium text-gray-700">Click to upload WhatsApp chat file</p>
+                    <p class="text-sm text-gray-500">Select your exported .txt chat file</p>
+                </label>
+            </div>
+            <div id="fileInfo" class="mt-4 hidden">
+                <p class="text-sm text-gray-600">Selected: <span id="fileName" class="font-medium"></span></p>
+            </div>
+            <div id="errorMessage" class="mt-4 hidden">
+                <div class="bg-error/10 border border-error/20 rounded-lg p-3">
+                    <p class="text-error text-sm"></p>
+                </div>
+            </div>
+            <div id="loadingIndicator" class="mt-4 hidden">
+                <div class="flex items-center justify-center">
+                    <div class="spinner mr-3"></div>
+                    <p class="text-primary">Processing chat file...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden fade-in">
+            <!-- Chat Overview -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-primary mb-4">Chat Overview</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-2xl font-bold text-primary" id="totalMessages">0</p>
+                        <p class="text-sm text-gray-600">Total Messages</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-2xl font-bold text-secondary" id="totalUsers">0</p>
+                        <p class="text-sm text-gray-600">Active Users</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-2xl font-bold text-accent" id="dateRange">-</p>
+                        <p class="text-sm text-gray-600">Date Range</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-2xl font-bold text-success" id="avgMessagesPerDay">0</p>
+                        <p class="text-sm text-gray-600">Avg Messages/Day</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-sm font-bold text-primary" id="startDate">-</p>
+                        <p class="text-xs text-gray-600">First Message</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-sm font-bold text-secondary" id="endDate">-</p>
+                        <p class="text-xs text-gray-600">Last Message</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Activity Analysis -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-primary mb-4">User Activity Analysis</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Most Active Users -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Most Active Users</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-neutral-bg">
+                                        <th class="px-3 py-2 text-left">User</th>
+                                        <th class="px-3 py-2 text-right">Messages</th>
+                                        <th class="px-3 py-2 text-right">Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activeUsersTable">
+                                </tbody>
+                            </table>
+                            <div id="expandUsersButton" class="hidden mt-3 text-center">
+                                <button onclick="document.querySelectorAll('#hiddenUser').forEach(row => row.classList.remove('hidden')); this.parentElement.classList.add('hidden')" 
+                                        class="text-primary hover:text-primary/80 text-sm font-medium">
+                                    Show More Users ↓
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- First/Last Message Stats -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Daily Message Champions</h3>
+                        <div class="space-y-3">
+                            <div class="bg-neutral-bg rounded-lg p-3">
+                                <p class="text-sm text-gray-600">Most First Messages of Day</p>
+                                <p class="font-semibold text-primary" id="firstMessageChampion">-</p>
+                            </div>
+                            <div class="bg-neutral-bg rounded-lg p-3">
+                                <p class="text-sm text-gray-600">Most Last Messages of Day</p>
+                                <p class="font-semibold text-secondary" id="lastMessageChampion">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Keyword Search -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-primary mb-4">Keyword Search</h2>
+                <div class="flex gap-4 mb-4">
+                    <input type="text" id="keywordInput" placeholder="Enter keywords (comma-separated)" 
+                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <button id="searchButton" class="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-colors">
+                        Search
+                    </button>
+                </div>
+                <div id="keywordResults" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Search Results</h3>
+                    <div id="keywordResultsContent"></div>
+                </div>
+            </div>
+
+            <!-- Message Content Analysis -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-primary mb-4">Message Content Analysis</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Most Used Words -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Most Used Words</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            <div id="mostUsedWords"></div>
+                        </div>
+                    </div>
+
+                    <!-- Top Emojis -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Top Emojis</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            <div id="topEmojis"></div>
+                        </div>
+                    </div>
+
+                    <!-- Common Phrases -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Common Phrases</h3>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            <div id="commonPhrases"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Statistics -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-primary mb-4">Message Statistics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-xl font-bold text-primary" id="avgMessageLength">0</p>
+                        <p class="text-sm text-gray-600">Avg Message Length (words)</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-xl font-bold text-secondary" id="questionRatio">0%</p>
+                        <p class="text-sm text-gray-600">Questions vs Statements</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-xl font-bold text-accent" id="linkCount">0</p>
+                        <p class="text-sm text-gray-600">Links Shared</p>
+                    </div>
+                    <div class="bg-neutral-bg rounded-lg p-4 text-center">
+                        <p class="text-xl font-bold text-warning" id="mediaCount">0</p>
+                        <p class="text-sm text-gray-600">Media Messages</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Temporal Analysis Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Time of Day Chart -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Activity by Time of Day</h3>
+                    <canvas id="timeOfDayChart"></canvas>
+                </div>
+
+                <!-- Day of Week Chart -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Activity by Day of Week</h3>
+                    <canvas id="dayOfWeekChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Message Analysis -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Message Length Distribution -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-primary mb-4">Message Length Distribution</h2>
+                    <canvas id="messageLengthChart"></canvas>
+                </div>
+
+                <!-- Average Word Length per User -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-primary mb-4">Average Word Length per User</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-neutral-bg">
+                                    <th class="px-3 py-2 text-left">User</th>
+                                    <th class="px-3 py-2 text-right">Avg Words/Message</th>
+                                    <th class="px-3 py-2 text-right">Total Messages</th>
+                                </tr>
+                            </thead>
+                            <tbody id="avgWordLengthTable">
+                            </tbody>
+                        </table>
+                        <div id="expandWordLengthButton" class="hidden mt-3 text-center">
+                            <button onclick="document.querySelectorAll('#hiddenWordLengthUser').forEach(row => row.classList.remove('hidden')); this.parentElement.classList.add('hidden')" 
+                                    class="text-primary hover:text-primary/80 text-sm font-medium">
+                                Show More Users ↓
+                            </button>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <p class="text-xs text-gray-500">* Only showing users with 100+ messages for meaningful averages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Message Days -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-primary mb-4">Top Message Days</h2>
+                <div id="peakPeriods" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        class ChatStripAnalyzer {
+            constructor() {
+                this.chatData = [];
+                this.users = new Set();
+                this.messagesByUser = {};
+                this.stopWords = new Set([
+                    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'up',
+                    'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
+                    'will', 'would', 'could', 'should', 'may', 'might', 'can', 'must', 'shall', 'this', 'that', 'these',
+                    'those', 'i', 'me', 'my', 'mine', 'you', 'your', 'yours', 'he', 'him', 'his', 'she', 'her', 'hers',
+                    'it', 'its', 'we', 'us', 'our', 'ours', 'they', 'them', 'their', 'theirs', 'what', 'which', 'who',
+                    'whom', 'whose', 'when', 'where', 'why', 'how', 'not', 'no', 'yes', 'ok', 'okay', 'oh', 'ah', 'uh',
+                    'um', 'er', 'so', 'well', 'now', 'then', 'just', 'only', 'even', 'also', 'too', 'very', 'quite',
+                    'really', 'actually', 'definitely', 'probably', 'maybe', 'perhaps', 'media', 'omitted'
+                ]);
+                this.init();
+            }
+
+            init() {
+                document.getElementById('chatFile').addEventListener('change', this.handleFileUpload.bind(this));
+                document.getElementById('searchButton').addEventListener('click', this.performKeywordSearch.bind(this));
+                document.getElementById('keywordInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performKeywordSearch();
+                });
+            }
+
+            async handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // Show file info
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileInfo').classList.remove('hidden');
+                document.getElementById('errorMessage').classList.add('hidden');
+                document.getElementById('loadingIndicator').classList.remove('hidden');
+
+                try {
+                    const text = await this.readFile(file);
+                    await this.parseChat(text);
+                    this.analyzeChat();
+                    this.displayResults();
+                    document.getElementById('resultsSection').classList.remove('hidden');
+                } catch (error) {
+                    this.showError('Error processing file: ' + error.message);
+                } finally {
+                    document.getElementById('loadingIndicator').classList.add('hidden');
+                }
+            }
+
+            readFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsText(file);
+                });
+            }
+
+            async parseChat(text) {
+                const lines = text.split('\n');
+                this.chatData = [];
+                this.users = new Set();
+
+                // Various WhatsApp date/time formats
+                const messagePatterns = [
+                    /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[APap][Mm])?)\]\s*([^:]+):\s*(.*)$/,
+                    /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[APap][Mm])?)\s*-\s*([^:]+):\s*(.*)$/,
+                    /^(\d{1,2}\/\d{1,2}\/\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[APap][Mm])?)\s*([^:]+):\s*(.*)$/
+                ];
+
+                let currentMessage = null;
+
+                for (let line of lines) {
+                    line = line.trim();
+                    if (!line) continue;
+
+                    let matched = false;
+                    for (const pattern of messagePatterns) {
+                        const match = line.match(pattern);
+                        if (match) {
+                            // Save previous message if exists
+                            if (currentMessage) {
+                                this.chatData.push(currentMessage);
+                            }
+
+                            const [, date, time, sender, content] = match;
+                            const dateTimeStr = `${date} ${time}`;
+                            
+                            currentMessage = {
+                                date: this.parseDate(dateTimeStr),
+                                sender: sender.trim(),
+                                content: content.trim(),
+                                rawDate: dateTimeStr
+                            };
+
+                            this.users.add(currentMessage.sender);
+                            matched = true;
+                            break;
+                        }
+                    }
+
+                    // If no pattern matched and we have a current message, append to content
+                    if (!matched && currentMessage) {
+                        currentMessage.content += ' ' + line;
+                    }
+                }
+
+                // Add the last message
+                if (currentMessage) {
+                    this.chatData.push(currentMessage);
+                }
+
+                if (this.chatData.length === 0) {
+                    throw new Error('No valid WhatsApp messages found. Please check the file format.');
+                }
+            }
+
+            parseDate(dateTimeStr) {
+                // Handle various date formats
+                const formats = [
+                    // DD/MM/YYYY, HH:MM:SS or DD/MM/YYYY, HH:MM
+                    /(\d{1,2})\/(\d{1,2})\/(\d{2,4}),?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*([APap][Mm]))?/,
+                    // MM/DD/YYYY formats
+                    /(\d{1,2})\/(\d{1,2})\/(\d{2,4}),?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*([APap][Mm]))?/
+                ];
+
+                for (const format of formats) {
+                    const match = dateTimeStr.match(format);
+                    if (match) {
+                        let [, day, month, year, hour, minute, second, ampm] = match;
+                        
+                        // Handle 2-digit years
+                        if (year.length === 2) {
+                            year = parseInt(year) > 50 ? '19' + year : '20' + year;
+                        }
+
+                        // Handle AM/PM
+                        hour = parseInt(hour);
+                        if (ampm) {
+                            if (ampm.toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                            if (ampm.toLowerCase() === 'am' && hour === 12) hour = 0;
+                        }
+
+                        // Try both DD/MM/YYYY and MM/DD/YYYY
+                        const date1 = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour, parseInt(minute), parseInt(second || 0));
+                        const date2 = new Date(parseInt(year), parseInt(day) - 1, parseInt(month), hour, parseInt(minute), parseInt(second || 0));
+                        
+                        // Return the date that seems more reasonable
+                        if (isNaN(date1.getTime())) return date2;
+                        if (isNaN(date2.getTime())) return date1;
+                        
+                        return date1; // Default to DD/MM/YYYY
+                    }
+                }
+
+                return new Date(); // Fallback
+            }
+
+            analyzeChat() {
+                this.messagesByUser = {};
+                this.wordFrequency = {};
+                this.emojiFrequency = {};
+                this.phraseFrequency = {};
+                this.messageLengths = [];
+                this.timeOfDayData = new Array(24).fill(0);
+                this.dayOfWeekData = new Array(7).fill(0);
+                this.firstLastMessageStats = {};
+                this.linkCount = 0;
+                this.mediaCount = 0;
+                this.questionCount = 0;
+
+                // Initialize user stats
+                this.users.forEach(user => {
+                    this.messagesByUser[user] = {
+                        count: 0,
+                        totalWords: 0,
+                        links: 0,
+                        questions: 0
+                    };
+                    this.firstLastMessageStats[user] = {
+                        firstMessages: 0,
+                        lastMessages: 0
+                    };
+                });
+
+                // Group messages by date for first/last analysis
+                const messagesByDate = {};
+                
+                this.chatData.forEach((message, index) => {
+                    const user = message.sender;
+                    const content = message.content;
+                    const date = message.date;
+
+                    // User message count
+                    this.messagesByUser[user].count++;
+
+                    // Check for media
+                    if (content.includes('<Media omitted>') || content.includes('media omitted')) {
+                        this.mediaCount++;
+                        return; // Skip further analysis for media messages
+                    }
+
+                    // Check for links
+                    if (content.match(/https?:\/\/[^\s]+/)) {
+                        this.linkCount++;
+                        this.messagesByUser[user].links++;
+                    }
+
+                    // Check for questions
+                    if (content.trim().endsWith('?')) {
+                        this.questionCount++;
+                        this.messagesByUser[user].questions++;
+                    }
+
+                    // Time analysis
+                    const hour = date.getHours();
+                    const dayOfWeek = date.getDay();
+                    this.timeOfDayData[hour]++;
+                    this.dayOfWeekData[dayOfWeek]++;
+
+                    // Group by date for first/last message analysis
+                    const dateKey = date.toDateString();
+                    if (!messagesByDate[dateKey]) {
+                        messagesByDate[dateKey] = [];
+                    }
+                    messagesByDate[dateKey].push({ user, index, time: date.getTime() });
+
+                    // Word and emoji analysis
+                    const words = content.toLowerCase()
+                        .replace(/[^\w\s\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ')
+                        .split(/\s+/)
+                        .filter(word => word.length > 1 && !this.stopWords.has(word));
+
+                    this.messagesByUser[user].totalWords += words.length;
+                    this.messageLengths.push(words.length);
+
+                    // Word frequency
+                    words.forEach(word => {
+                        this.wordFrequency[word] = (this.wordFrequency[word] || 0) + 1;
+                    });
+
+                    // Phrase frequency (2-grams and 3-grams)
+                    for (let i = 0; i < words.length - 1; i++) {
+                        const phrase2 = words.slice(i, i + 2).join(' ');
+                        this.phraseFrequency[phrase2] = (this.phraseFrequency[phrase2] || 0) + 1;
+
+                        if (i < words.length - 2) {
+                            const phrase3 = words.slice(i, i + 3).join(' ');
+                            this.phraseFrequency[phrase3] = (this.phraseFrequency[phrase3] || 0) + 1;
+                        }
+                    }
+
+                    // Emoji frequency
+                    const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+                    const emojis = content.match(emojiRegex) || [];
+                    emojis.forEach(emoji => {
+                        this.emojiFrequency[emoji] = (this.emojiFrequency[emoji] || 0) + 1;
+                    });
+                });
+
+                // Analyze first/last messages per day
+                Object.values(messagesByDate).forEach(dayMessages => {
+                    if (dayMessages.length === 0) return;
+                    
+                    dayMessages.sort((a, b) => a.time - b.time);
+                    const firstUser = dayMessages[0].user;
+                    const lastUser = dayMessages[dayMessages.length - 1].user;
+                    
+                    this.firstLastMessageStats[firstUser].firstMessages++;
+                    this.firstLastMessageStats[lastUser].lastMessages++;
+                });
+            }
+
+            displayResults() {
+                this.displayOverview();
+                this.displayUserActivity();
+                this.displayContentAnalysis();
+                this.displayMessageStats();
+                this.displayCharts();
+                this.displayAvgWordLengthPerUser();
+                this.displayPeakPeriods();
+            }
+
+            displayOverview() {
+                const totalMessages = this.chatData.length;
+                const totalUsers = this.users.size;
+                
+                const dates = this.chatData.map(m => m.date).sort((a, b) => a - b);
+                const startDate = dates[0];
+                const endDate = dates[dates.length - 1];
+                const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) || 1;
+                
+                // Format dates for display
+                const formatDate = (date) => {
+                    return date.toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                };
+                
+                document.getElementById('totalMessages').textContent = totalMessages.toLocaleString();
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('dateRange').textContent = `${daysDiff} days`;
+                document.getElementById('avgMessagesPerDay').textContent = Math.round(totalMessages / daysDiff);
+                document.getElementById('startDate').textContent = formatDate(startDate);
+                document.getElementById('endDate').textContent = formatDate(endDate);
+            }
+
+            displayUserActivity() {
+                // Most active users table
+                const userStats = Object.entries(this.messagesByUser)
+                    .map(([user, stats]) => ({
+                        user,
+                        count: stats.count,
+                        percentage: ((stats.count / this.chatData.length) * 100).toFixed(1)
+                    }))
+                    .sort((a, b) => b.count - a.count);
+
+                const tableBody = document.getElementById('activeUsersTable');
+                const expandButton = document.getElementById('expandUsersButton');
+                
+                // Show first 10 users
+                const visibleUsers = userStats.slice(0, 10);
+                const hiddenUsers = userStats.slice(10);
+                
+                // Clear existing content
+                tableBody.innerHTML = '';
+                
+                // Add visible users
+                visibleUsers.forEach(stat => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-100';
+                    row.innerHTML = `
+                        <td class="px-3 py-2 font-medium">${stat.user}</td>
+                        <td class="px-3 py-2 text-right">${stat.count.toLocaleString()}</td>
+                        <td class="px-3 py-2 text-right">${stat.percentage}%</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Add hidden users if there are more than 10 users
+                if (hiddenUsers.length > 0) {
+                    hiddenUsers.forEach(stat => {
+                        const row = document.createElement('tr');
+                        row.className = 'border-b border-gray-100 hidden';
+                        row.id = 'hiddenUser';
+                        row.innerHTML = `
+                            <td class="px-3 py-2 font-medium">${stat.user}</td>
+                            <td class="px-3 py-2 text-right">${stat.count.toLocaleString()}</td>
+                            <td class="px-3 py-2 text-right">${stat.percentage}%</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    expandButton.classList.remove('hidden');
+                } else {
+                    expandButton.classList.add('hidden');
+                }
+
+                // First/Last message champions
+                const firstMessageChampion = Object.entries(this.firstLastMessageStats)
+                    .sort((a, b) => b[1].firstMessages - a[1].firstMessages)[0];
+                const lastMessageChampion = Object.entries(this.firstLastMessageStats)
+                    .sort((a, b) => b[1].lastMessages - a[1].lastMessages)[0];
+
+                document.getElementById('firstMessageChampion').textContent = 
+                    firstMessageChampion ? `${firstMessageChampion[0]} (${firstMessageChampion[1].firstMessages} times)` : '-';
+                document.getElementById('lastMessageChampion').textContent = 
+                    lastMessageChampion ? `${lastMessageChampion[0]} (${lastMessageChampion[1].lastMessages} times)` : '-';
+            }
+
+            displayContentAnalysis() {
+                // Most used words
+                const topWords = Object.entries(this.wordFrequency)
+                    .filter(([word, count]) => {
+                        const wordLower = word.toLowerCase();
+                        
+                        // Filter out media-related words
+                        if (wordLower.includes('http') || wordLower.includes('image') || 
+                            wordLower.includes('audio') || wordLower.includes('video')) {
+                            return false;
+                        }
+                        
+                        // Filter out specific unwanted words/phrases
+                        const unwantedWords = [
+                            'once', 'message', 'view', 'added', 'privacy', 'open', 'phone',
+                            'received', 'youtube', 'com', 'www', 'watch', 'edited'
+                        ];
+                        
+                        if (unwantedWords.includes(wordLower)) {
+                            return false;
+                        }
+                        
+                        // Filter out date-related patterns (numbers that could be years/dates)
+                        if (/^\d{2,4}$/.test(wordLower)) {
+                            return false;
+                        }
+                        
+                        // Filter out user names (case insensitive)
+                        const userNames = Array.from(this.users).map(name => name.toLowerCase());
+                        if (userNames.includes(wordLower)) {
+                            return false;
+                        }
+                        
+                        // Filter out individual name parts from multi-word user names
+                        const containsNamePart = userNames.some(userName => {
+                            const nameWords = userName.split(' ').filter(part => part.length > 1);
+                            return nameWords.some(namePart => namePart === wordLower);
+                        });
+                        
+                        return !containsNamePart;
+                    })
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 30);
+
+                document.getElementById('mostUsedWords').innerHTML = topWords.map(([word, count]) => `
+                    <div class="flex justify-between items-center py-1">
+                        <span class="text-sm">${word}</span>
+                        <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded">${count}</span>
+                    </div>
+                `).join('');
+
+                // Top emojis
+                const topEmojis = Object.entries(this.emojiFrequency)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 20);
+
+                document.getElementById('topEmojis').innerHTML = topEmojis.map(([emoji, count]) => `
+                    <div class="flex justify-between items-center py-1">
+                        <span class="text-lg">${emoji}</span>
+                        <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded">${count}</span>
+                    </div>
+                `).join('');
+
+                // Common phrases
+                const topPhrases = Object.entries(this.phraseFrequency)
+                    .filter(([phrase, count]) => {
+                        // Filter out phrases with low count
+                        if (count <= 2) return false;
+                        
+                        const phraseLower = phrase.toLowerCase();
+                        
+                        // Filter out phrases containing http
+                        if (phraseLower.includes('http')) return false;
+                        
+                        // Filter out phrases containing "image"
+                        if (phraseLower.includes('image')) return false;
+                        
+                        // Filter out phrases containing "audio"
+                        if (phraseLower.includes('audio')) return false;
+                        
+                        // Filter out phrases containing "video"
+                        if (phraseLower.includes('video')) return false;
+                        
+                        // Filter out specific WhatsApp system messages and unwanted phrases
+                        const unwantedPhrases = [
+                            'once message',
+                            'view once',
+                            'view once message', 
+                            'once message added',
+                            'message added',
+                            'message added privacy',
+                            'added privacy',
+                            'added privacy open',
+                            'privacy open',
+                            'privacy open phone',
+                            'open phone',
+                            'received view',
+                            'received view once',
+                            'youtube com',
+                            'www youtube',
+                            'com watch',
+                            'message edited'
+                        ];
+                        
+                        if (unwantedPhrases.some(unwanted => phraseLower.includes(unwanted))) {
+                            return false;
+                        }
+                        
+                        // Filter out date patterns like "08 2024", "07 2024", "2023 16", etc.
+                        if (/\b\d{2}\s+\d{4}\b/.test(phraseLower) || /\b\d{4}\s+\d{2}\b/.test(phraseLower)) {
+                            return false;
+                        }
+                        
+                        // Filter out phrases that contain any user names or partial name combinations
+                        const phraseWords = phraseLower.split(' ');
+                        const userNames = Array.from(this.users).map(name => name.toLowerCase());
+                        
+                        // Check for full user names
+                        const containsFullUserName = userNames.some(userName => 
+                            phraseLower.includes(userName)
+                        );
+                        
+                        if (containsFullUserName) return false;
+                        
+                        // Check for partial name combinations (first+middle, first+last, etc.)
+                        for (const userName of userNames) {
+                            const nameWords = userName.split(' ').filter(word => word.length > 1);
+                            if (nameWords.length > 1) {
+                                // Check if phrase contains any combination of name parts
+                                const namePartsInPhrase = nameWords.filter(namePart => 
+                                    phraseWords.some(phraseWord => phraseWord === namePart)
+                                );
+                                
+                                // If phrase contains 2 or more parts of a name, exclude it
+                                if (namePartsInPhrase.length >= 2) {
+                                    return false;
+                                }
+                            }
+                        }
+                        
+                        return true;
+                    })
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 20);
+
+                document.getElementById('commonPhrases').innerHTML = topPhrases.map(([phrase, count]) => `
+                    <div class="flex justify-between items-center py-1">
+                        <span class="text-sm">${phrase}</span>
+                        <span class="text-xs bg-accent/10 text-accent px-2 py-1 rounded">${count}</span>
+                    </div>
+                `).join('');
+            }
+
+            displayMessageStats() {
+                const avgLength = this.messageLengths.length > 0 ? 
+                    (this.messageLengths.reduce((a, b) => a + b, 0) / this.messageLengths.length).toFixed(1) : 0;
+                
+                const questionRatio = this.chatData.length > 0 ? 
+                    ((this.questionCount / this.chatData.length) * 100).toFixed(1) : 0;
+
+                document.getElementById('avgMessageLength').textContent = avgLength;
+                document.getElementById('questionRatio').textContent = `${questionRatio}%`;
+                document.getElementById('linkCount').textContent = this.linkCount;
+                document.getElementById('mediaCount').textContent = this.mediaCount;
+            }
+
+            displayCharts() {
+                // Time of day chart
+                const timeCtx = document.getElementById('timeOfDayChart').getContext('2d');
+                new Chart(timeCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                        datasets: [{
+                            label: 'Messages',
+                            data: this.timeOfDayData,
+                            backgroundColor: '#2C86A4',
+                            borderColor: '#17A2B8',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Day of week chart
+                const dayCtx = document.getElementById('dayOfWeekChart').getContext('2d');
+                const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                // Reorder data to start with Monday (index 1) instead of Sunday (index 0)
+                const reorderedDayData = [
+                    this.dayOfWeekData[1], // Monday
+                    this.dayOfWeekData[2], // Tuesday
+                    this.dayOfWeekData[3], // Wednesday
+                    this.dayOfWeekData[4], // Thursday
+                    this.dayOfWeekData[5], // Friday
+                    this.dayOfWeekData[6], // Saturday
+                    this.dayOfWeekData[0]  // Sunday
+                ];
+                new Chart(dayCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: dayNames,
+                        datasets: [{
+                            label: 'Messages',
+                            data: reorderedDayData,
+                            backgroundColor: '#17A2B8',
+                            borderColor: '#2C86A4',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Message length distribution
+                const lengthCategories = [
+                    { label: '1-5 words', min: 1, max: 5 },
+                    { label: '6-10 words', min: 6, max: 10 },
+                    { label: '11-20 words', min: 11, max: 20 },
+                    { label: '21-50 words', min: 21, max: 50 },
+                    { label: '50+ words', min: 51, max: Infinity }
+                ];
+
+                const lengthData = lengthCategories.map(category => 
+                    this.messageLengths.filter(length => 
+                        length >= category.min && length <= category.max
+                    ).length
+                );
+
+                const lengthCtx = document.getElementById('messageLengthChart').getContext('2d');
+                new Chart(lengthCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: lengthCategories.map(c => c.label),
+                        datasets: [{
+                            data: lengthData,
+                            backgroundColor: ['#2C86A4', '#17A2B8', '#FFB400', '#4CAF50', '#FF9800']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            displayAvgWordLengthPerUser() {
+                // Calculate average word length per user
+                const userAvgWordLength = Object.entries(this.messagesByUser)
+                    .map(([user, stats]) => ({
+                        user,
+                        avgWordLength: stats.count > 0 ? (stats.totalWords / stats.count).toFixed(1) : 0,
+                        totalMessages: stats.count,
+                        totalWords: stats.totalWords
+                    }))
+                    .filter(stat => stat.totalMessages >= 100) // Filter users with less than 100 messages
+                    .sort((a, b) => parseFloat(a.avgWordLength) - parseFloat(b.avgWordLength));
+
+                const tableBody = document.getElementById('avgWordLengthTable');
+                const expandButton = document.getElementById('expandWordLengthButton');
+                
+                // Show first 10 users
+                const visibleUsers = userAvgWordLength.slice(0, 10);
+                const hiddenUsers = userAvgWordLength.slice(10);
+                
+                // Clear existing content
+                tableBody.innerHTML = '';
+                
+                // Add visible users
+                visibleUsers.forEach(stat => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-100';
+                    row.innerHTML = `
+                        <td class="px-3 py-2 font-medium">${stat.user}</td>
+                        <td class="px-3 py-2 text-right text-primary font-semibold">${stat.avgWordLength}</td>
+                        <td class="px-3 py-2 text-right text-gray-600">${stat.totalMessages.toLocaleString()}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Add hidden users if there are more than 10 users
+                if (hiddenUsers.length > 0) {
+                    hiddenUsers.forEach(stat => {
+                        const row = document.createElement('tr');
+                        row.className = 'border-b border-gray-100 hidden';
+                        row.id = 'hiddenWordLengthUser';
+                        row.innerHTML = `
+                            <td class="px-3 py-2 font-medium">${stat.user}</td>
+                            <td class="px-3 py-2 text-right text-primary font-semibold">${stat.avgWordLength}</td>
+                            <td class="px-3 py-2 text-right text-gray-600">${stat.totalMessages.toLocaleString()}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    expandButton.classList.remove('hidden');
+                } else {
+                    expandButton.classList.add('hidden');
+                }
+            }
+
+            displayPeakPeriods() {
+                // Group messages by day
+                const dailyActivity = {};
+                this.chatData.forEach(message => {
+                    const date = message.date;
+                    const dateKey = date.toDateString(); // e.g., "Mon Oct 09 2023"
+                    
+                    dailyActivity[dateKey] = (dailyActivity[dateKey] || 0) + 1;
+                });
+
+                // Find top 6 days with most messages
+                const topDays = Object.entries(dailyActivity)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 6);
+
+                const peakContainer = document.getElementById('peakPeriods');
+                peakContainer.innerHTML = topDays.map(([dateStr, count]) => {
+                    // Format the date more nicely
+                    const date = new Date(dateStr);
+                    const formattedDate = date.toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    
+                    return `
+                        <div class="bg-neutral-bg rounded-lg p-4">
+                            <p class="font-semibold text-primary">${count} messages</p>
+                            <p class="text-sm text-gray-600">${formattedDate}</p>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            performKeywordSearch() {
+                const input = document.getElementById('keywordInput').value.trim();
+                if (!input) return;
+
+                const keywords = input.split(',').map(k => k.trim().toLowerCase()).filter(k => k);
+                const results = {};
+
+                keywords.forEach(keyword => {
+                    results[keyword] = {};
+                    this.users.forEach(user => {
+                        results[keyword][user] = 0;
+                    });
+                });
+
+                this.chatData.forEach(message => {
+                    const content = message.content.toLowerCase();
+                    const user = message.sender;
+
+                    keywords.forEach(keyword => {
+                        const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+                        const matches = content.match(regex);
+                        if (matches) {
+                            results[keyword][user] += matches.length;
+                        }
+                    });
+                });
+
+                this.displayKeywordResults(keywords, results);
+            }
+
+            displayKeywordResults(keywords, results) {
+                const resultsContainer = document.getElementById('keywordResultsContent');
+                
+                // Calculate total statistics across all keywords
+                const totalStats = {};
+                keywords.forEach(keyword => {
+                    Object.entries(results[keyword]).forEach(([user, count]) => {
+                        if (count > 0) {
+                            totalStats[user] = (totalStats[user] || 0) + count;
+                        }
+                    });
+                });
+
+                const totalUserCounts = Object.entries(totalStats)
+                    .sort((a, b) => b[1] - a[1]);
+
+                const totalMatches = totalUserCounts.reduce((sum, [user, count]) => sum + count, 0);
+
+                // Build the total section
+                const totalSection = totalUserCounts.length > 0 ? `
+                    <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm mr-2">TOTAL</span>
+                            Overall Statistics (${keywords.length} keyword${keywords.length > 1 ? 's' : ''})
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <p class="text-sm text-gray-600">Total Matches</p>
+                                <p class="text-xl font-bold text-primary">${totalMatches}</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 shadow-sm">
+                                <p class="text-sm text-gray-600">Keywords Searched</p>
+                                <p class="text-xl font-bold text-primary">${keywords.join(', ')}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm font-medium text-gray-700 mb-2">Matches by User:</p>
+                            ${totalUserCounts.map(([user, count]) => `
+                                <div class="flex justify-between items-center bg-white rounded-lg px-3 py-2 shadow-sm">
+                                    <span class="font-medium">${user}</span>
+                                    <span class="bg-blue-500 text-white px-2 py-1 rounded text-sm">${count}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : '';
+
+                resultsContainer.innerHTML = totalSection + keywords.map(keyword => {
+                    const userCounts = Object.entries(results[keyword])
+                        .filter(([user, count]) => count > 0)
+                        .sort((a, b) => b[1] - a[1]);
+
+                    if (userCounts.length === 0) {
+                        return `
+                            <div class="mb-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">Keyword: "${keyword}"</h4>
+                                <p class="text-gray-500 text-sm">No matches found</p>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-800 mb-3">Keyword: "${keyword}"</h4>
+                            <div class="space-y-2">
+                                ${userCounts.map(([user, count]) => `
+                                    <div class="flex justify-between items-center bg-neutral-bg rounded-lg px-3 py-2">
+                                        <span class="font-medium">${user}</span>
+                                        <span class="bg-primary text-white px-2 py-1 rounded text-sm">${count}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById('keywordResults').classList.remove('hidden');
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.querySelector('p').textContent = message;
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChatStripAnalyzer();
+        });
+    </script>
+</body>
+</html>
